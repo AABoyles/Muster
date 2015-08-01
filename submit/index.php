@@ -35,13 +35,17 @@
         </nav>
         <div id="main" class="container-fluid">
           <div class="row">
-            <div class="col-md-8 col-md-offset-2 input-group form-horizontal">
-              <form method="POST" action="/api/submit.php">
-                <label for="email">Email address</label>
-                <input name="email" id="email" type="email" class="form-control"><br />
-
-                <label for="essay">Position Statement</label>
-                <textarea name="essay" id="essay" class="form-control"></textarea><br />
+            <div class="col-md-8 col-md-offset-2">
+              <form>
+                <div class="form-group">
+                  <label for="email">Email address</label>
+                  <input name="email" id="email" type="email" class="form-control"><br />
+                </div>
+                
+                <div class="form-group">
+                  <label for="essay">Position Statement</label>
+                  <textarea name="essay" id="essay" class="form-control"></textarea><br />
+                </div>
 
                 <div class="radio">
                   <label>
@@ -56,7 +60,8 @@
                   </label>
                 </div>
 
-                <span class="input-group-btn" style="text-align:center;"><button class="btn btn-default" type="submit">Submit</button></span>
+                <span class="input-group-btn" style="text-align:center;"><button id="submit-position" class="btn btn-default">Submit</button></span>
+
               </form>
             </div>
           </div>
@@ -71,4 +76,5 @@
     </body>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="../main.js"></script>
 </html>
