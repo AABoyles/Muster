@@ -1,4 +1,5 @@
 $(function(){
+
     $(".voteReal, .voteFake").click(function(){
         var $this = $(this);
         $.post("api/vote.php", {id: this.id, real: $this.hasClass("voteReal")}, function(ret){
@@ -8,14 +9,14 @@ $(function(){
             });
         }, "json");
     });
+    
     $("#submit").click(function(){
         $.post("api/submit.php", {
             email:$("#email").val(),
             essay:$("#essay").val(),
             realop:$("#realop").is(":checked")?1:0
         }, function(ret){
-            alert("Success!");
-            window.location = window.location.origin;
+            
         }, "json");
     });
 });
