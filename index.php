@@ -26,18 +26,19 @@
         </style>
     </head>
     <body>
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header"><a class="navbar-brand" href="#">Muster</a></div>
-            <ul class="nav navbar-nav navbar-left">
-              <li><a href="#" id="explain" data-toggle="modal" data-target="#whatisthis">What is this?</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="#" id="addAPosition" data-toggle="modal" data-target="#submissions">Submit a Position</a></li>
-            </ul>
-          </div>
-        </nav>
-        <div id="main" class="row">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header"><a class="navbar-brand" href="#">Muster</a></div>
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="#" id="explain" data-toggle="modal" data-target="#whatisthis">What is this?</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="addAPosition" data-toggle="modal" data-target="#submissions">Submit a Position</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div id="main" class="container-fluid">
+        <div class="row">
           <div class="col-md-10 col-md-offset-1">
             <table class="table">
               <thead><tr><th>Position</th><th>Vote</th></tr></thead>
@@ -75,7 +76,7 @@
                       <label>
                         <input type="radio" name="realop" id="realop" value="1" checked>
                         This is my Real Opinion
-                      </label>
+                    </label>
                     </div>
                     <div class="radio">
                       <label>
@@ -104,6 +105,7 @@
                   <p>To use it, read the positions presented. Then judge them. Click "Real" if you believe the author actually believes the passage. Click "Fake" if you think the author doesn't actually believe what s/he wrote.</p>
                   <p>When you judge an entry, Muster will show you the number of votes that the argument was real/fake, along with whether the passage was actually a real or fake representation of the author's beliefs.</p>
                   <p>If you'd like to submit a position, click on the "Submit a Position" link and enter your e-mail, position, and whether that position really represents your beliefs. (You may have to refresh the page to see the entry).</p>
+                  <p>So, Can you pass Muster?</p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Got it.</button>
@@ -111,15 +113,15 @@
               </div>
             </div>
           </div>
-
         </div>
-        <nav class="navbar navbar-default navbar-fixed-bottom">
-          <div class="container">
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="https://futurecensus.github.io">by <span id="future">Future</span><span id="census">Census</span></a></li>
-            </ul>
-          </div>
-        </nav>
+      </div>
+      <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://futurecensus.github.io">by <span id="future">Future</span><span id="census">Census</span></a></li>
+          </ul>
+        </div>
+      </nav>
     </body>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
