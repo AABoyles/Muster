@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Muster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css" type="text/css">
+    <style>
+      #future { 
+        color: orange !important; 
+      }
+      #census {
+        color: black !important;
+      }
+      #future, #census {
+        font-family: 'Roboto', sans-serif;
+        font-weight: bold;
+        font-size: 24px;
+      }
+    </style>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header"><a class="navbar-brand" href="#">Muster</a></div>
+        <ul class="nav navbar-nav navbar-right navbar-form">
+          <li>
+            <div class="form-group">
+              <select id="category" class="form-control">
+                <option value="1">Science and Technology</option>
+                <option value="2">Philosophy and Religion</option>
+                <option value="3">Politics</option>
+                <option value="4">Pop Culture</option>
+                <option value="5">Errata</option>
+              </select>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <div class="container-fluid">
+      <div class="row"><div id="main" class="col-md-10 col-md-offset-1"></div></div>
+      <div class="row"><div class="col-md-10 col-md-offset-1" style="text-align:center;"><button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default" role="button">Create a New Topic</button></div></div>
+    </div>
+
+    <div class="modal fade" id="submissions" tabindex="-1" role="dialog" aria-labelledby="newPositionLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="newPositionLabel">Submit a New Position</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group" id="submissionemailwrapper">
+                <label for="email">Email address</label>
+                <input name="email" id="email" type="email" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="essay">Position Statement</label>
+                <textarea name="essay" id="essay" class="form-control" rows="6"></textarea>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="realop" id="realop" value="1" checked="">
+                  This is my Real Opinion
+              </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="realop" id="fakeop" value="0">
+                  This is NOT my Real Opinion
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="submitPosition">Submit!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="topics" tabindex="-1" role="dialog" aria-labelledby="newTopicLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="newTopicLabel">Create a New Topic</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group" id="topicemailwrapper">
+                <label for="email">Email address</label>
+                <input name="email" id="topicemail" type="email" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="topicname">Topic Name</label>
+                <input name="topicname" id="topicname" type="text" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="topicdescription">(Optional) Topic Description</label>
+                <textarea name="topicdescription" id="topicdescription" class="form-control" rows="6" placeholder="If you think the name is insufficiently descriptive or you want to provide additional directions for this topic, say so here."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="submitTopic">Submit!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="whatisthis" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="myModalLabel">What is this?</h4>
+          </div>
+          <div class="modal-body">
+            <p>Muster is a platform for <a href="https://en.wikipedia.org/wiki/Ideological_Turing_Test">Ideological Turing tests</a> (ITT). An ITT tests your ability to determine whether or not an argument was written by someone who actually believes what they've written. It is designed to determine whether people have an accurate understanding of the arguments of their ideological and political adversaries.</p>
+            <p>To use Muster, read the positions presented. Then judge them. Click "Real" if you believe the author actually believes the passage. Click "Fake" if you think the author doesn't actually believe what s/he wrote.</p>
+            <p>When you judge an entry, Muster will show you the number of votes that the argument was real/fake, along with whether the passage was actually a real or fake representation of the author's beliefs.</p>
+            <p>If you'd like to submit a position, click on the "Submit a Position" link and enter your e-mail, position, and whether that position really represents your beliefs. (You may have to refresh the page to see the entry).</p>
+            <p>So, Can you pass Muster?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Got it.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="myscore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="myModalLabel">What is this?</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Got it.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="#" id="explain" data-toggle="modal" data-target="#whatisthis">What is this?</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="https://futurecensus.github.io">by <span id="future">Future</span><span id="census">Census</span></a></li>
+        </ul>
+      </div>
+    </nav>
+    
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.0.3/js.cookie.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>
