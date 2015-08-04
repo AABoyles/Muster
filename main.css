@@ -1,0 +1,41 @@
+#future { 
+  color: orange !important; 
+}
+#census {
+  color: black !important;
+}
+#future, #census {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+}
+.addAPosition {
+  margin:10px;
+}
+.submission{
+  padding:10px;
+}
+.submission:hover{
+  box-shadow: 0px 0px 5px #99f;
+}
+.bar {
+  fill: steelblue;
+}
+.bar:hover {
+  fill: brown;
+}
+.axis {
+  font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis path {
+  display: none;
+}
+body {
+  padding-bottom: 70px;
+}
