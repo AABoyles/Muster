@@ -16,15 +16,23 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         $response["success"] = FALSE;
     }
 } else {
-    $topic = "1";
-    if(in_array("topicid",$_GET)){
-        $topic = mysqli_real_escape_string($db, $_GET['topicid']);
-    } else {
-        $topic = "1";
+    $query = "SELECT name, description, tid FROM `topic`";
+    if(!is_null($_GET['topicid'])){
+        $topicid = mysqli_real_escape_string($db, $_GET['topicid']);
+        $query = "$query WHERE tid = $topicid";
+    } elseif(!is_null($_GET['topicname'])) {
+        $topicname = mysqli_real_escape_string($db, $_GET['topicname']);
+        $query = "$query WHERE name = '$topicname'";
     }
-    $query = "SELECT sid, content, name FROM `submission`, `topic` WHERE tid = topicid AND tid = $topic ORDER BY RAND() LIMIT 100";
     $results = mysqli_query($db, $query);
-    $response = mysqli_fetch_all($results, MYSQLI_ASSOC);
+    $response['topic'] = mysqli_fetch_assoc($results);
+
+    if(is_null($topicid)){
+        $topicid = $response['topic']['tid'];
+    }
+    $query = "SELECT sid, content FROM `submission` WHERE topicid = $topicid ORDER BY RAND() LIMIT 10";
+    $results = mysqli_query($db, $query);
+    $response['submissions'] = mysqli_fetch_all($results, MYSQLI_ASSOC);
 }
 
 exit(json_encode($response));
