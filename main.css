@@ -1,3 +1,6 @@
+body{
+  padding: 40px 0px;
+}
 #future { 
   color: orange !important; 
 }
@@ -9,14 +12,87 @@
   font-weight: bold;
   font-size: 24px;
 }
+.typeahead,
+.tt-query,
+.tt-hint {
+  border: 2px solid #ccc;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  outline: none;
+}
+
+.typeahead {
+  background-color: #fff;
+}
+
+.typeahead:focus {
+  border: 2px solid #0097cf;
+}
+
+.tt-query {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+  color: #999
+}
+
+.tt-menu {
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+  padding: 3px 20px;
+}
+
+.tt-suggestion:hover {
+  cursor: pointer;
+  color: #fff;
+  background-color: #0097cf;
+}
+
+.tt-suggestion.tt-cursor {
+  color: #fff;
+  background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
 .addAPosition {
   margin:10px;
 }
 .submission{
   padding:10px;
+  background-color: #fff;
+  border-radius: 15px;
+  margin: 20px 0px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-transition-duration: 0.6s;
+  transition-duration: 0.6s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
 }
-.submission:hover{
-  box-shadow: 0px 0px 5px #99f;
+.submission:hover, .submission:focus, .submission:active {
+  box-shadow: 0px 0px 10px 8px rgba(190, 190, 255, 1.0);
 }
 .bar {
   fill: steelblue;
@@ -36,6 +112,9 @@
 .x.axis path {
   display: none;
 }
-body {
-  padding-bottom: 70px;
+.navbar-bottom{
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  margin: 0;
 }
