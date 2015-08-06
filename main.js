@@ -22,46 +22,45 @@ $(function(){
           "<p style='text-align:center;'>"+ret.topic.description+"</p>");
         Cookies.set("topicname", ret.topic.name);
         Cookies.set("topicid", ret.topic.tid);
-        $.each(ret.submissions, function(i, el){
-          var submissionDiv = $("<div id='submission"+el.sid+"' class='submission'>");
-          if(el.content===null){
-            submissionDiv.append("<p>Be the first to submit a position!</p>");
-          } else {
-            submissionDiv.append("<blockquote>"+el.content+"</blockquote>");
-            if(!Cookies.get("votedFor"+el.sid)){
-              //TODO: Move this to a Template
-              submissionDiv.append('<div style="text-align:center;">'+
-              ' <p>How confident are you (in percentages) that the author <b>actually</b> holds this opinion?</p>'+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">1</button> ' +
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">10</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">20</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">30</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">40</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">50</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">60</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">70</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">80</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">90</button> '+
-              ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">99</button>' +
-              '</div>').find(".estimate").click(function(){
-                var $this = $(this);
-                $.post("api/estimate.php", {sid: $this.data("sid"), estimate: parseInt($this.text())}, function(ret){
-                  $this.parent().slideUp(400, function(){
-                    $(this).html("<p>Distribution of estimates:</p><svg id='graph"+$this.data("sid")+"'></svg>").slideDown();
-                    app.buildGraph($this.data('sid'), ret);
-                  });
-                  Cookies.set("voteFor"+$this.data("sid"), parseInt($this.text()));
-                }, "json");
-              });
-            } else {
-              $.getJSON("api/estimate.php", {sid: el.sid}, function(ret){
-                submissionDiv.append("<div style='text-align:center;'><p>Distribution of estimates:</p></div><svg id='graph"+el.sid+"'></svg>");
-                app.buildGraph(el.sid, ret);
-              });
-            }
-          }
-          main.append(submissionDiv);
-        });
+        if(ret.submissions.length == 0){
+          main.append("<div class='panel panel-default submission'><p>Be the first to submit a position!</p></div>");
+        } else {
+          $.each(ret.submissions, function(i, el){
+            var submissionDiv = $("<div id='submission"+el.sid+"' class='panel panel-default submission'>").append("<div class='panel-body'>"+markdown.toHTML(el.content)+"</div>");
+              if(!Cookies.get("votedFor"+el.sid)){
+                //TODO: Move this to a Template
+                submissionDiv.append('<div class="panel-body estimation">'+
+                ' <p>How confident are you (in percentages) that the author <b>actually</b> holds this opinion?</p>'+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">1</button> ' +
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">10</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">20</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">30</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">40</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">50</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">60</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">70</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">80</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">90</button> '+
+                ' <button data-sid="'+el.sid+'" class="estimate btn btn-default">99</button>' +
+                '</div>').find(".estimate").click(function(){
+                  var $this = $(this);
+                  $.post("api/estimate.php", {sid: $this.data("sid"), estimate: parseInt($this.text())}, function(ret){
+                    $this.parent().slideUp(400, function(){
+                      $(this).html("<p>Distribution of estimates:</p><svg id='graph"+$this.data("sid")+"'></svg>").slideDown();
+                      app.buildGraph($this.data('sid'), ret);
+                    });
+                    Cookies.set("voteFor"+$this.data("sid"), parseInt($this.text()));
+                  }, "json");
+                });
+              } else {
+                $.getJSON("api/estimate.php", {sid: el.sid}, function(ret){
+                  submissionDiv.append("<div style='text-align:center;'><p>Distribution of estimates:</p></div><svg id='graph"+el.sid+"'></svg>");
+                  app.buildGraph(el.sid, ret);
+                });
+              }
+            main.append(submissionDiv);
+          });
+        }
         main.append("<div style='text-align:center;'><button data-toggle='modal' data-target='#submissions' class='btn btn-default addAPosition' role='button'>Submit Your Position</button></div>").slideDown(400);
       });
     });

@@ -1,6 +1,7 @@
 body{
   padding: 40px 0px;
 }
+
 #future { 
   color: orange !important; 
 }
@@ -12,6 +13,7 @@ body{
   font-weight: bold;
   font-size: 24px;
 }
+
 .typeahead,
 .tt-query,
 .tt-hint {
@@ -21,25 +23,20 @@ body{
           border-radius: 8px;
   outline: none;
 }
-
 .typeahead {
   background-color: #fff;
 }
-
 .typeahead:focus {
   border: 2px solid #0097cf;
 }
-
 .tt-query {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-
 .tt-hint {
   color: #999
 }
-
 .tt-menu {
   padding: 8px 0;
   background-color: #fff;
@@ -52,34 +49,36 @@ body{
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
 }
-
 .tt-suggestion {
   padding: 3px 20px;
 }
-
 .tt-suggestion:hover {
   cursor: pointer;
   color: #fff;
   background-color: #0097cf;
 }
-
 .tt-suggestion.tt-cursor {
   color: #fff;
   background-color: #0097cf;
 
 }
-
 .tt-suggestion p {
   margin: 0;
 }
+
 .addAPosition {
   margin:10px;
 }
+
+.estimation{
+  text-align: center;
+}
+
+.md-control-fullscreen{
+  display:none;
+}
+
 .submission{
-  padding:10px;
-  background-color: #fff;
-  border-radius: 15px;
-  margin: 20px 0px;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
@@ -94,6 +93,7 @@ body{
 .submission:hover, .submission:focus, .submission:active {
   box-shadow: 0px 0px 10px 8px rgba(190, 190, 255, 1.0);
 }
+
 .bar {
   fill: steelblue;
 }
@@ -112,6 +112,7 @@ body{
 .x.axis path {
   display: none;
 }
+
 .navbar-bottom{
   position: absolute;
   width: 100%;
