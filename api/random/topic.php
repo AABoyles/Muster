@@ -2,10 +2,8 @@
 
 require_once("../creds.php");
 
-$response = array();
-
-$query = "SELECT `name` as topicname, `tid` as topicid FROM `topic` ORDER BY RAND() LIMIT 1";
+$query = "SELECT tid, name, description, sid, content FROM topics LEFT JOIN (submissions) ON (tid = topicid) ORDER BY RAND() LIMIT 1";
 $result = mysqli_query($db, $query);
-$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+$response = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-exit(json_encode($row));
+exit(json_encode($response));

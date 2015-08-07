@@ -25,7 +25,11 @@
     
     <div class="container-fluid">
       <div class="row">
-        <div id="main" class="col-md-8 col-md-offset-2"></div>
+        <div class="col-md-8 col-md-offset-2" id="main"></div>
+        <div class="col-md-8 col-md-offset-2" style='text-align:center;'>
+          <button id="get-new-position" class='btn btn-default' role='button'>Judge Another Position</button>
+          <button data-toggle='modal' data-target='#submissions' class='btn btn-default' role='button'>Submit Your Position</button>
+        </div>
       </div>
     </div>
 
@@ -45,6 +49,7 @@
               <div class="form-group">
                 <label for="essay">Position Statement</label>
                 <textarea name="essay" id="essay" class="form-control" rows="6" placeholder="Enter your submission here. If the title suggests a certain perspective (e.g. 'As a Christian...'), be certain to write from that perspective, and then indicate whether you actually hold that belief. You can also enter Markdown, if you want."></textarea>
+                <div style="text-align:right;"><span id="submission-word-count">0</span><span> / 100 Words (minimum)</span></div>
               </div>
               <div class="radio">
                 <label>

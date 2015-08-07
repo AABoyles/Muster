@@ -2,10 +2,10 @@
 
 require_once("creds.php");
 
-$query = "INSERT INTO  `user` (`email`, `password`) VALUES ('".mysqli_real_escape_string($db, $_POST['email'])."', '".mysqli_real_escape_string($db, $_POST['password'])."')";
+$query = "INSERT INTO  `users` (`email`, `password`) VALUES ('".mysqli_real_escape_string($db, $_POST['email'])."', '".mysqli_real_escape_string($db, $_POST['password'])."')";
 $result = mysqli_query($db, $query);
 
-$query = "SELECT uid FROM  `user` WHERE `email` = '".mysqli_real_escape_string($db, $_POST['email'])."'";
+$query = "SELECT uid FROM  `users` WHERE `email` = '".mysqli_real_escape_string($db, $_POST['email'])."'";
 $result = mysqli_query($db, $query);
 $uid = mysqli_fetch_assoc($result)['uid'];
 
