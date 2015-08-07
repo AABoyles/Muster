@@ -5,7 +5,7 @@ require_once("creds.php");
 $response = array();
 
 if($_SERVER['REQUEST_METHOD']=='POST'){
-    $result = mysqli_query($db, "INSERT INTO  submissions (`topicid`, `content`, `realop`, `createdby`) VALUES (".
+    $result = mysqli_query($db, "INSERT INTO  submissions (`topicid`, `content`, `realop`, `userid`) VALUES (".
         mysqli_real_escape_string($db, $_POST['topicid']).",'".
         mysqli_real_escape_string($db, $_POST['essay'])."',".
         mysqli_real_escape_string($db, $_POST['realop']).",".

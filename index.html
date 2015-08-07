@@ -17,7 +17,8 @@
               <input type="text" class="form-control typeahead" placeholder="Search for Topics" id="topicSearch" />
             </div>
             <button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>
-            <button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default" role="button">Create a New Topic</button>
+            <button data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
+            <button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>
           </form>
         </div>
       </div>
@@ -27,8 +28,36 @@
       <div class="row">
         <div class="col-md-8 col-md-offset-2" id="main"></div>
         <div class="col-md-8 col-md-offset-2" style='text-align:center;'>
-          <button id="get-new-position" class='btn btn-default' role='button'>Judge Another Position</button>
-          <button data-toggle='modal' data-target='#submissions' class='btn btn-default' role='button'>Submit Your Position</button>
+          <button id="login-button" data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
+          <button id="get-new-position" class='btn btn-default while-logged-in' role='button'>Judge Another Position</button>
+          <button data-toggle='modal' data-target='#submissions' class='btn btn-default while-logged-in' role='button'>Submit Your Position</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="login-dialog" tabindex="-1" role="dialog" aria-labelledby="loginLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="loginLabel">Login</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group emailwrapper">
+                <label for="email">Email address</label>
+                <input name="email" id="email" type="email" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input name="password" id="password" type="password" class="form-control">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">I don't want to!</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
+          </div>
         </div>
       </div>
     </div>
@@ -42,10 +71,6 @@
           </div>
           <div class="modal-body">
             <form>
-              <div class="form-group emailwrapper">
-                <label for="email">Email address</label>
-                <input name="email" id="email" type="email" class="form-control">
-              </div>
               <div class="form-group">
                 <label for="essay">Position Statement</label>
                 <textarea name="essay" id="essay" class="form-control" rows="6" placeholder="Enter your submission here. If the title suggests a certain perspective (e.g. 'As a Christian...'), be certain to write from that perspective, and then indicate whether you actually hold that belief. You can also enter Markdown, if you want."></textarea>
@@ -82,10 +107,6 @@
           </div>
           <div class="modal-body">
             <form>
-              <div class="form-group emailwrapper">
-                <label for="email">Email address</label>
-                <input name="email" id="topicemail" type="email" class="form-control">
-              </div>
               <div class="form-group">
                 <label for="topicname">Topic Name</label>
                 <input name="topicname" id="topicname" type="text" class="form-control">
@@ -154,8 +175,10 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.0.3/js.cookie.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"></script>
     <script type="text/javascript" src="main.js"></script>
   </body>

@@ -1,55 +1,91 @@
 app = {
-  randomTopic: function(e){},
-  randomSubmission: function(e){},
-  populateBody: function(){},
-  addUser: function(){},
-  buildGraph: function(data){},
-  currentBodyContent: {}
+  user:{
+    isLoggedIn: false,
+    login: function(){},
+    logout: function(){},
+  },
+  random:{
+    topic: function(e){},
+    submission: function(e){},
+  },
+  ui:{
+    populate: function(){},
+    graph: function(data){},
+    setCurrentContent: function(content){
+      app.ui.currentBodyContent = content;
+      Cookies.set("topicname", content.name);
+      Cookies.set("topicid", content.tid);
+    },
+    currentBodyContent: {}
+  }
 };
 
 $(function(){
-  app.randomTopic = function(e){
+  app.user.login = function(){
+    $.post("api/user/login.php", {
+      "email": $("#email").val(),
+      "password": $("#password").val()
+    }, function(ret){
+      if(ret.success){
+        Cookies.set("uid", ret.uid);
+        Cookies.set("email", $("#email").val());
+        app.user.isLoggedIn = true;
+        $(".while-logged-in").fadeIn();
+        $(".while-logged-out").fadeOut();
+      }
+    });
+  }
+
+  app.user.logout = function(){
+    $.post("api/logout.php", {
+      "email": $("#email").val(),
+      "password": $("#password").val()
+    }, function(){
+      $(".while-logged-out").fadeOut();
+      $(".while-logged-in").fadeIn();
+    });
+  }
+
+  app.random.topic = function(e){
     $.getJSON("api/random/topic.php",{},function(data){
-      Cookies.set("topicname", data.topicname);
-      Cookies.set("topicid", data.topicid);
+      app.ui.setCurrentContent(data);
       $('#topicSearch').typeahead('val', data.topicname);
-      app.currentBodyContent = data;
-      app.populateBody();
+      app.ui.populate();
     });
   };
 
-  app.randomSubmission = function(e){
+  app.random.submission = function(e){
     $.getJSON("api/random/submission.php",{topicname: Cookies.get("topicname")},function(data){
-      app.currentBodyContent = data;
+      app.ui.setCurrentContent(data);
+      app.ui.populate();
     });
-    app.populateBody();
   };
 
-  app.populateBody = function(e){
-    if(!app.currentBodyContent){
-      $.getJSON("api/submission.php", {topicname: Cookies.get("topicname")}, function(ret){app.currentBodyContent = ret;});
+  app.ui.populate = function(e){
+    if(_(app.ui.currentBodyContent).isEmpty()){
+      return app.random.topic();
     }
     var main = $("#main").slideUp(400, function(){
-      main.html("<h2 style='text-align:center;'>"+app.currentBodyContent.name+"</h2><p style='text-align:center;'>"+app.currentBodyContent.description+"</p>");
+      main.html("<h2 style='text-align:center;'>"+app.ui.currentBodyContent.name+"</h2><p style='text-align:center;'>"+app.ui.currentBodyContent.description+"</p>");
       var submissionDiv = $("<div class='panel panel-default submission'>");
-      if(app.currentBodyContent.sid == null){
+      if(app.ui.currentBodyContent.sid == null){
         submissionDiv.append("<div class='panel-body' style='text-align:center;'>Be the first to <a href='#' data-toggle='modal' data-target='#submissions'>submit a position.</a></div>");
       } else {
-        submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(app.currentBodyContent.content)+"</div>");
-          if(!Cookies.get("votedFor"+app.currentBodyContent.sid)){
+        submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(app.ui.currentBodyContent.content)+"</div>");
+          if(!Cookies.get("votedFor"+app.ui.currentBodyContent.sid)){
             submissionDiv.append('<hr /><div class="panel-body estimation">'+
             ' <p>How confident are you (in percentages) that the author <b>actually</b> holds this opinion?</p>'+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">1</button> ' +
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">10</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">20</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">30</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">40</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">50</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">60</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">70</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">80</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">90</button> '+
-            ' <button data-sid="'+app.currentBodyContent.sid+'" class="estimate btn btn-default">99</button>' +
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">1</button> ' +
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">10</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">20</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">30</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">40</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">50</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">60</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">70</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">80</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">90</button> '+
+            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">99</button>' +
             '</div>').find(".estimate").click(function(){
               var $this = $(this);
               $.post("api/estimate.php", {sid: $this.data("sid"), estimate: parseInt($this.text())}, function(data){
@@ -61,9 +97,9 @@ $(function(){
               }, "json");
             });
           } else {
-            $.getJSON("api/estimate.php", {sid: app.currentBodyContent.sid}, function(ret){
-              submissionDiv.append("<div style='text-align:center;'><p>Distribution of estimates:</p></div><svg id='graph"+app.currentBodyContent.sid+"'></svg>");
-              app.buildGraph(app.currentBodyContent.submission.sid, ret);
+            $.getJSON("api/estimate.php", {sid: app.ui.currentBodyContent.sid}, function(ret){
+              submissionDiv.append("<div style='text-align:center;'><p>Distribution of estimates:</p></div><svg id='graph"+app.ui.currentBodyContent.sid+"'></svg>");
+              app.ui.graph(app.ui.currentBodyContent.submission.sid, ret);
             });
           }
         main.append(submissionDiv);
@@ -72,26 +108,7 @@ $(function(){
     });
   };
 
-  app.addUser = function(email){
-    Cookies.set("email", email);
-    var rawpw = Array(128);
-    for(var i=0; i<128; i++){
-      rawpw[i] = String.fromCharCode(32+Math.round(Math.random()*94));
-    }
-    var pw = rawpw.join("");
-    Cookies.set("password", pw);
-    $.post("api/user.php", {
-      email: email,
-      password: pw
-    }, function(ret){
-      if(ret.success){
-        Cookies.set("uid", ret.uid);
-      }
-    }, "json");
-    $(".emailwrapper").hide();
-  };
-
-  app.buildGraph = function(sid, ret){
+  app.ui.graph = function(sid, ret){
     var margin = {top: 10, right: 20, bottom: 20, left: 30},
       width = $("svg#graph"+sid).parent().width() - margin.left - margin.right,
       height = 100 - margin.top - margin.bottom,
@@ -129,10 +146,10 @@ $(function(){
     })
   }).bind('typeahead:select', function(ev, suggestion) {
     Cookies.set("topicname", suggestion);
-    app.populateBody();
+    app.ui.populate();
   });
 
-  $("#randomTopic").click(app.randomTopic);
+  $("#randomTopic").click(app.random.topic);
 
   $("#essay").keyup(function(){
     $("#submission-word-count").text($(this).val().replace("\s+", " ").split(" ").length);
@@ -140,7 +157,7 @@ $(function(){
 
   $("#submitTopic").click(function(){
     if(!Cookies.get("email")){
-      app.addUser($("#topicemail").val());
+      app.user.addUser($("#topicemail").val());
     }
     $.post("api/topic.php", {
       name: $("#topicname").val(),
@@ -151,14 +168,11 @@ $(function(){
         "topicid": parseInt(data.tid),
         "topicname": $("#topicname").val()
       });
-      app.populateBody();
+      app.ui.populate();
     }, "json");
   });
 
   $("#submitPosition").click(function(){
-    if(!Cookies.get("email")){
-      app.addUser($("#email").val());
-    }
     if(parseInt($("#submission-word-count").text()) < 100){
       $("#submission-word-count").addClass("invalid");
     }
@@ -167,14 +181,14 @@ $(function(){
       essay: $("#essay").val(),
       realop: $("#realop").is(":checked"),
       uid: Cookies.get("uid")
-    }, app.populateBody, "json");
+    }, app.ui.populate, "json");
   });
 
-  if(Cookies.get("email")){
-    $(".emailwrapper").hide();
+  $("#get-new-position").click(app.random.submission);
+
+  if(Cookies.get("topicname")){
+    app.ui.populate();
+  } else {
+    app.random.topic();
   }
-
-  $("#get-new-position").click(app.randomSubmission);
-
-  app.randomTopic();
 });

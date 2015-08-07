@@ -135,3 +135,9 @@ hr{
   bottom: 0px;
   margin: 0;
 }
+.while-logged-in{
+
+}
+.while-logged-out{
+  display:none;
+}
