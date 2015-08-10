@@ -129,6 +129,10 @@ hr{
   display: none;
 }
 
+.column-header{
+  border:none;
+}
+
 .navbar-bottom{
   position: absolute;
   width: 100%;

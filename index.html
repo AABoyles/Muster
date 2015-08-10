@@ -5,21 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css" type="text/css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css" type="text/css" />
     <link rel="stylesheet" href="main.css" type="text/css" />
   </head>
 
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
-        <div class="navbar-header"><a class="navbar-brand" href="#">Muster</a></div>
-          <div class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" class="form-control typeahead" placeholder="Search for Topics" id="topicSearch" />
-            </div>
-            <button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>
-            <button data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
-            <button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>
-          </form>
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Muster</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topic-controls" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-form navbar-right" id="topic-controls">
+          <div class="form-group">
+            <input type="text" class="form-control typeahead" placeholder="Search for Topics" id="topicSearch" />
+          </div>
+          <button id="view-all-topics" class="btn btn-default" role="button">View All Topics</button>
+          <button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>
+          <button data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
+          <button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>
         </div>
       </div>
     </nav>
@@ -27,11 +37,6 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-8 col-md-offset-2" id="main"></div>
-        <div class="col-md-8 col-md-offset-2" style='text-align:center;'>
-          <button id="login-button" data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
-          <button id="get-new-position" class='btn btn-default while-logged-in' role='button'>Judge Another Position</button>
-          <button data-toggle='modal' data-target='#submissions' class='btn btn-default while-logged-in' role='button'>Submit Your Position</button>
-        </div>
       </div>
     </div>
 

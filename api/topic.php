@@ -18,16 +18,14 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         $response["success"] = TRUE;
     }
 } else {
-    $query = "SELECT `name` FROM  `topics`";
+    $query = "SELECT tid, name, description, sid, content FROM topics LEFT JOIN (submissions) ON (tid = topicid)";
     if(!is_null($_GET['topicname'])){
         $topicname = mysqli_real_escape_string($db, $_GET['topicname']);
-        $query = "$query WHERE name LIKE '%$topicname%'";
+        $query = "$query WHERE name = '$topicname'";
     }
-    $query = "$query ORDER BY `name`";
+    $query = "$query ORDER BY RAND() LIMIT 1";
     $result = mysqli_query($db, $query);
-    while($row = $result->fetch_array(MYSQLI_NUM)){
-        $response[] = $row[0];
-    }
+    $response = $result->fetch_array(MYSQLI_ASSOC);
 }
 
 exit(json_encode($response));

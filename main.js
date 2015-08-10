@@ -1,4 +1,7 @@
 app = {
+  topic: function(topicname){},
+  estimate: function(){},
+  submission: function(){},
   user:{
     isLoggedIn: false,
     login: function(){},
@@ -9,18 +12,18 @@ app = {
     submission: function(e){},
   },
   ui:{
-    populate: function(){},
+    populate: function(data){},
     graph: function(data){},
-    setCurrentContent: function(content){
-      app.ui.currentBodyContent = content;
-      Cookies.set("topicname", content.name);
-      Cookies.set("topicid", content.tid);
-    },
+    table: function(data){},
     currentBodyContent: {}
   }
 };
 
 $(function(){
+  app.topic = function(topicname){
+    $.getJSON("api/topic.php",{topicname: topicname},app.ui.populate);
+  }
+  
   app.user.login = function(){
     $.post("api/user/login.php", {
       "email": $("#email").val(),
@@ -47,29 +50,30 @@ $(function(){
   }
 
   app.random.topic = function(e){
-    $.getJSON("api/random/topic.php",{},function(data){
-      app.ui.setCurrentContent(data);
-      $('#topicSearch').typeahead('val', data.topicname);
-      app.ui.populate();
-    });
+    $.getJSON("api/random/topic.php",{},app.ui.populate);
   };
 
   app.random.submission = function(e){
     $.getJSON("api/random/submission.php",{topicname: Cookies.get("topicname")},function(data){
-      app.ui.setCurrentContent(data);
-      app.ui.populate();
+      app.ui.populate(data);
     });
   };
 
-  app.ui.populate = function(e){
-    if(_(app.ui.currentBodyContent).isEmpty()){
-      return app.random.topic();
+  app.ui.populate = function(currentContent){
+    if(_(currentContent).isEmpty()){
+      if(_(app.ui.currentBodyContent).isEmpty()){
+        return app.random.topic();
+      }
+      return app.ui.populate(app.ui.currentBodyContent);
     }
+    app.ui.currentBodyContent = currentContent;
+    Cookies.set("topicname", currentContent.name);
+    Cookies.set("topicid", currentContent.tid);
     var main = $("#main").slideUp(400, function(){
-      main.html("<h2 style='text-align:center;'>"+app.ui.currentBodyContent.name+"</h2><p style='text-align:center;'>"+app.ui.currentBodyContent.description+"</p>");
+      main.html("<h2 class='text-center'>"+app.ui.currentBodyContent.name+"</h2><p class='text-center'>"+app.ui.currentBodyContent.description+"</p>");
       var submissionDiv = $("<div class='panel panel-default submission'>");
-      if(app.ui.currentBodyContent.sid == null){
-        submissionDiv.append("<div class='panel-body' style='text-align:center;'>Be the first to <a href='#' data-toggle='modal' data-target='#submissions'>submit a position.</a></div>");
+      if(_(app.ui.currentBodyContent.sid).isNull()){
+        submissionDiv.append("<div class='panel-body'><p class='text-center'>Be the first to <a href='#' data-toggle='modal' data-target='#submissions'>submit a position.</a></p></div>");
       } else {
         submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(app.ui.currentBodyContent.content)+"</div>");
           if(!Cookies.get("votedFor"+app.ui.currentBodyContent.sid)){
@@ -90,21 +94,24 @@ $(function(){
               var $this = $(this);
               $.post("api/estimate.php", {sid: $this.data("sid"), estimate: parseInt($this.text())}, function(data){
                 $this.parent().slideUp(400, function(){
-                  $(this).html("<p>Distribution of estimates:</p><svg id='graph"+$this.data("sid")+"'></svg>").slideDown();
-                  app.buildGraph($this.data('sid'), data);
+                  $(this).html("<p class='text-center'>Distribution of estimates:</p><svg id='graph"+$this.data("sid")+"'></svg>").slideDown();
+                  app.ui.graph($this.data('sid'), data);
                 });
                 Cookies.set("voteFor"+$this.data("sid"), parseInt($this.text()));
               }, "json");
             });
           } else {
             $.getJSON("api/estimate.php", {sid: app.ui.currentBodyContent.sid}, function(ret){
-              submissionDiv.append("<div style='text-align:center;'><p>Distribution of estimates:</p></div><svg id='graph"+app.ui.currentBodyContent.sid+"'></svg>");
+              submissionDiv.append("<hr /><div class='panel-body'><p class='text-center'>Distribution of estimates:</p></div><svg id='graph"+app.ui.currentBodyContent.sid+"'></svg>");
               app.ui.graph(app.ui.currentBodyContent.submission.sid, ret);
             });
           }
-        main.append(submissionDiv);
       }
-      main.slideDown(400);
+      main
+        .append(submissionDiv)
+        .append("<div style='text-align:center;'><button id='get-new-position' class='btn btn-default while-logged-in' role='button'>Judge Another Position</button>&nbsp;<button data-toggle='modal' data-target='#submissions' class='btn btn-default while-logged-in' role='button'>Submit Your Position</button></div>")
+        .find("#get-new-position").click(app.random.submission);
+      main.slideDown();
     });
   };
 
@@ -138,21 +145,45 @@ $(function(){
     source: new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      prefetch: 'api/topic.php',
+      prefetch: 'api/autocomplete/',
       remote: {
-        url: 'api/autocomplete/?topicname=%QUERY',
-        wildcard: '%QUERY'
+        url: 'api/autocomplete/?topicname=%Q',
+        wildcard: '%Q'
       }
     })
-  }).bind('typeahead:select', function(ev, suggestion) {
-    Cookies.set("topicname", suggestion);
-    app.ui.populate();
+  }).bind('typeahead:select', function(ev, suggestion){app.topic(suggestion);});
+  
+  $("#view-all-topics").click(function(){
+    var main = $("#main").slideUp(400, function(){
+      $(this).html("<h2>Topics</h2><table id='topic-table' class='table responsive table-striped table-bordered table-hover'><thead><tr><th><input type='text' class='column-header' data-colno='0' placeholder='Name' /></th><th><input type='integer' class='column-header' data-colno='2' placeholder='Submissions' /></th></thead></table>");
+      var table = $(this).find("#topic-table").DataTable({
+        ajax: "api/all/topics.php",
+        dom: "t",
+        responsive: true
+      });
+      table.columns().eq(0).each(function (colIdx) {
+        $('input', table.column(colIdx).header()).on('keyup keydown change', function(){
+          table.column(colIdx).search($(this).val(), true, false).draw()
+        }).click(function(evt){
+          evt.preventDefault();
+          evt.stopPropagation();
+          return false;
+        });
+      });
+      $("#topic-table").on('draw.dt', function(){
+        $(this).find("tr td:first-child").click(function(){app.topic($(this).text().trim());});
+      });
+      $(this)
+        .append('<button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>')
+        .slideDown();
+    })
+    
   });
 
   $("#randomTopic").click(app.random.topic);
 
   $("#essay").keyup(function(){
-    $("#submission-word-count").text($(this).val().replace("\s+", " ").split(" ").length);
+    $("#submission-word-count").text($(this).val().replace("\s+", " ").trim().split(" ").length);
   });
 
   $("#submitTopic").click(function(){
@@ -183,8 +214,6 @@ $(function(){
       uid: Cookies.get("uid")
     }, app.ui.populate, "json");
   });
-
-  $("#get-new-position").click(app.random.submission);
 
   if(Cookies.get("topicname")){
     app.ui.populate();
