@@ -1,12 +1,15 @@
 body{
-  padding: 70px 0px;
+  padding-bottom:20px;
 }
 
-#future { 
+#futurecensus:hover{
+  text-decoration:none;
+}
+#future {
   color: orange !important; 
 }
-#census {
-  color: black !important;
+#census{
+  color: black;
 }
 #future, #census {
   font-family: 'Roboto', sans-serif;
@@ -133,12 +136,6 @@ hr{
   border:none;
 }
 
-.navbar-bottom{
-  position: absolute;
-  width: 100%;
-  bottom: 0px;
-  margin: 0;
-}
 .while-logged-in{
 
 }

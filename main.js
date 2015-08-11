@@ -1,4 +1,5 @@
 app = {
+  get: {},
   topic: function(topicname){},
   estimate: function(){},
   submission: function(){},
@@ -18,6 +19,10 @@ app = {
     currentBodyContent: {}
   }
 };
+
+window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+  app.get[key] = value;
+});
 
 $(function(){
   app.topic = function(topicname){

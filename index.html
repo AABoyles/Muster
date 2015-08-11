@@ -11,10 +11,10 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-static-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">Muster</a>
+          <span class="navbar-brand" href="#" data-toggle="modal" data-target="#whatisthis">Muster</span>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topic-controls" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -26,10 +26,9 @@
           <div class="form-group">
             <input type="text" class="form-control typeahead" placeholder="Search for Topics" id="topicSearch" />
           </div>
-          <button id="view-all-topics" class="btn btn-default" role="button">View All Topics</button>
+          <button id="view-all-topics" class="btn btn-default" role="button">Topics</button>
           <button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>
           <button data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
-          <button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>
         </div>
       </div>
     </nav>
@@ -143,6 +142,7 @@
             <p>When you judge an entry, Muster will show you the number of votes that the argument was real/fake, along with whether the passage was actually a real or fake representation of the author's beliefs.</p>
             <p>If you'd like to submit a position, click on the "Submit a Position" link and enter your e-mail, position, and whether that position really represents your beliefs. (You may have to refresh the page to see the entry).</p>
             <p>So, Can you pass Muster?</p>
+            <p class="text-center">Muster is a project of <a href="https://futurecensus.github.io" id="futurecensus"><span id="future">Future</span><span id="census">Census</span></a></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Got it.</button>
@@ -165,17 +165,6 @@
         </div>
       </div>
     </div>
-
-    <nav class="navbar navbar-default navbar-fixed-bottom">
-      <div class="container-fluid">
-        <ul class="nav navbar-nav navbar-left">
-          <li><a href="#" id="explain" data-toggle="modal" data-target="#whatisthis">What is this?</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="https://futurecensus.github.io">by <span id="future">Future</span><span id="census">Census</span></a></li>
-        </ul>
-      </div>
-    </nav>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
