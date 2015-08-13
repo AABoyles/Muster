@@ -1,10 +1,15 @@
 app = {
-  get: {},
+  get: (function(){
+    var resp = {};
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+      resp[key] = value;
+    });
+    return resp;
+  })(),
   topic: function(topicname){},
   estimate: function(){},
   submission: function(){},
   user:{
-    isLoggedIn: false,
     login: function(){},
     logout: function(){},
   },
@@ -16,20 +21,18 @@ app = {
     populate: function(data){},
     graph: function(data){},
     table: function(data){},
-    currentBodyContent: {}
   }
 };
 
-window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-  app.get[key] = value;
-});
-
 $(function(){
-  app.topic = function(topicname){
-    $.getJSON("api/topic.php",{topicname: topicname},app.ui.populate);
-  }
   
-  app.user.login = function(){
+  //API one-liners
+  app.topic = function(topicname){$.getJSON("api/topic.php",{topicname: topicname},app.ui.populate);};
+  app.random.topic = function(e){$.getJSON("api/random/topic.php",{},app.ui.populate);};
+  app.random.submission = function(e){$.getJSON("api/random/submission.php",{topicname: JSON.parse(Cookies.get("currentContent")).name},app.ui.populate);};
+  
+  //Login/Logout stuff
+  app.user.login = function(e){
     $.post("api/user/login.php", {
       "email": $("#email").val(),
       "password": $("#password").val()
@@ -37,64 +40,61 @@ $(function(){
       if(ret.success){
         Cookies.set("uid", ret.uid);
         Cookies.set("email", $("#email").val());
-        app.user.isLoggedIn = true;
+        Cookies.set("password", $("#password").val());
+        $(".while-logged-out").hide();
         $(".while-logged-in").fadeIn();
-        $(".while-logged-out").fadeOut();
+        $("#flying-rules").html(".while-logged-out{display:none;}");
       }
-    });
+    }, "json");
   }
 
   app.user.logout = function(){
-    $.post("api/logout.php", {
-      "email": $("#email").val(),
-      "password": $("#password").val()
+    $.post("api/user/logout.php", {
+      "email": Cookies.get("email"),
+      "password": Cookies.get("password")
     }, function(){
-      $(".while-logged-out").fadeOut();
-      $(".while-logged-in").fadeIn();
+      $("#email").val("");
+      $("#password").val("");
+      Cookies.remove("uid");
+      Cookies.remove("email");
+      Cookies.remove("password");
+      $(".while-logged-out").fadeIn();
+      $(".while-logged-in").hide();
+      $("#flying-rules").html(".while-logged-in{display:none;}");
     });
   }
 
-  app.random.topic = function(e){
-    $.getJSON("api/random/topic.php",{},app.ui.populate);
-  };
-
-  app.random.submission = function(e){
-    $.getJSON("api/random/submission.php",{topicname: Cookies.get("topicname")},function(data){
-      app.ui.populate(data);
-    });
-  };
-
+  //This is a Monster and must be broken into logical pieces immediately
   app.ui.populate = function(currentContent){
     if(_(currentContent).isEmpty()){
-      if(_(app.ui.currentBodyContent).isEmpty()){
+      if(!Cookies.get(currentContent)){
         return app.random.topic();
       }
-      return app.ui.populate(app.ui.currentBodyContent);
+      currentContent = JSON.parse(Cookies.get("currentContent"));
     }
-    app.ui.currentBodyContent = currentContent;
-    Cookies.set("topicname", currentContent.name);
-    Cookies.set("topicid", currentContent.tid);
+    Cookies.set("currentContent", currentContent);
+    console.log(currentContent);
     var main = $("#main").slideUp(400, function(){
-      main.html("<h2 class='text-center'>"+app.ui.currentBodyContent.name+"</h2><p class='text-center'>"+app.ui.currentBodyContent.description+"</p>");
-      var submissionDiv = $("<div class='panel panel-default submission'>");
-      if(_(app.ui.currentBodyContent.sid).isNull()){
+      main.html("<h2 class='text-center'>"+currentContent.name+"</h2><p class='text-center'>"+currentContent.description+"</p>");
+      var submissionDiv = $("<div class='panel panel-default submission'></div>");
+      if(_(currentContent.sid).isNull()){
         submissionDiv.append("<div class='panel-body'><p class='text-center'>Be the first to <a href='#' data-toggle='modal' data-target='#submissions'>submit a position.</a></p></div>");
       } else {
-        submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(app.ui.currentBodyContent.content)+"</div>");
-        if(!Cookies.get("voteFor"+app.ui.currentBodyContent.sid)){
+        submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(currentContent.content)+"</div>");
+        if(!Cookies.get("voteFor"+currentContent.sid)){
           submissionDiv.append('<hr /><div class="panel-body estimation">'+
             ' <p>How confident are you (in percentages) that the author <b>actually</b> holds this opinion?</p>'+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">1</button> ' +
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">10</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">20</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">30</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">40</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">50</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">60</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">70</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">80</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">90</button> '+
-            ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">99</button>' +
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">1</button> ' +
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">10</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">20</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">30</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">40</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">50</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">60</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">70</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">80</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">90</button> '+
+            ' <button data-sid="'+currentContent.sid+'" class="estimate btn btn-default">99</button>' +
             '</div>').find(".estimate").click(function(){
               var $this = $(this);
               var estimate = parseInt($this.text());
@@ -118,29 +118,29 @@ $(function(){
                 });
               }, "json");
             });
-          } else {
-            submissionDiv
-              .append('<hr /><div class="panel-body estimation"><p class="text-center">You\'ve already judged this Submission.</p><button class="btn btn-default">Show Results</button></div>')
-              .find("button").click(function(){
-                $this = $(this);
-                $.getJSON("api/estimate.php", {sid: app.ui.currentBodyContent.sid}, function(ret){
-                  $this.parent().slideUp(400, function(){
-                    var belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author does not believe this.</p></div>";
-                    if(ret.isReal=="1"){
-                      belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author holds this belief honestly.</p></div>";
-                    }
-                    $(this)
-                      .html("<p class='text-center'>Distribution of estimates:</p><svg id='graph'></svg>"+belief)
-                      .slideDown();
-                    app.ui.graph(ret);
-                  });
+        } else {
+          submissionDiv
+          .append('<hr /><div class="panel-body estimation"><p class="text-center">You\'ve already judged this Submission.</p><button class="btn btn-default">Show Results</button></div>')
+          .find("button").click(function(){
+            $this = $(this);
+            $.getJSON("api/estimate.php", {sid: currentContent.sid}, function(ret){
+              $this.parent().slideUp(400, function(){
+                var belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author does not believe this.</p></div>";
+                if(ret.isReal=="1"){
+                  belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author holds this belief honestly.</p></div>";
+                }
+                $(this)
+                  .html("<p class='text-center'>Distribution of estimates:</p><svg id='graph'></svg>"+belief)
+                  .slideDown();
+                  app.ui.graph(ret);
                 });
-            });
-          }
+              });
+          });
+        }
       }
       main
         .append(submissionDiv)
-        .append("<div style='text-align:center;'><button id='get-new-position' class='btn btn-default while-logged-in' role='button'>Judge Another Position</button>&nbsp;<button data-toggle='modal' data-target='#submissions' class='btn btn-default while-logged-in' role='button'>Submit Your Position</button></div>")
+        .append("<div style='text-align:center;'><button id='get-new-position' class='btn btn-default' role='button'>Judge Another Position</button>&nbsp;<button data-toggle='modal' data-target='#submissions' class='btn btn-default while-logged-in' role='button'>Submit Your Position</button></div>")
         .find("#get-new-position").click(app.random.submission);
       main.slideDown();
     });
@@ -161,15 +161,33 @@ $(function(){
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     x.domain(["1","10","20","30","40","50","60","70","80","90","99"]);
     y.domain([0, d3.max(ret.estimates, function(d) { return parseInt(d.numberOfEstimates); })]);
-    svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis);
-    svg.append("g").attr("class", "y axis").call(yAxis);
-    svg.selectAll(".bar").data(ret.estimates).enter()
+    svg
+      .append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+    svg
+      .append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+    svg
+      .selectAll(".bar")
+      .data(ret.estimates)
+      .enter()
       .append("rect").attr("class", "bar")
       .attr("x", function(d) { return x(d.estimateValue); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(parseInt(d.numberOfEstimates)); })
       .attr("height", function(d) { return height - y(parseInt(d.numberOfEstimates)); });
   };
+
+
+  //...And all the UI Stuff.
+  
+  //One liners you might be able to bake into the Markup without much fuss...
+  $("#login-button").click(app.user.login);
+  $("#logout-button").click(app.user.logout);
+  $("#randomTopic").click(app.random.topic);
 
   $('#topicSearch').typeahead(null, {
     name: 'topics',
@@ -192,6 +210,7 @@ $(function(){
         dom: "t",
         responsive: true
       });
+
       table.columns().eq(0).each(function (colIdx) {
         $('input', table.column(colIdx).header()).on('keyup keydown change', function(){
           table.column(colIdx).search($(this).val(), true, false).draw()
@@ -201,35 +220,35 @@ $(function(){
           return false;
         });
       });
+
       $("#topic-table").on('draw.dt', function(){
         $(this).find("tr td:first-child").click(function(){app.topic($(this).text().trim());});
       });
+
       $(this)
         .append('<div style="text-align:center;"><button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button></div>')
         .slideDown();
     })
-    
   });
 
-  $("#randomTopic").click(app.random.topic);
-
   $("#essay").keyup(function(){
-    $("#submission-word-count").text($(this).val().replace("\s+", " ").trim().split(" ").length);
+    var wordcount = $(this)
+      .val()
+      .replace(/\s+/, " ")
+      .trim()
+      .split(" ")
+      .length
+    $("#submission-word-count").text(wordcount);
   });
 
   $("#submitTopic").click(function(){
-    if(!Cookies.get("email")){
-      app.user.addUser($("#topicemail").val());
-    }
     $.post("api/topic.php", {
       name: $("#topicname").val(),
       description: $("#topicdescription").val(),
       uid: Cookies.get("uid")
     }, function(data){
-      Cookies.set({
-        "topicid": parseInt(data.tid),
-        "topicname": $("#topicname").val()
-      });
+      Cookies.set("topicid", parseInt(data.tid));
+      Cookies.set("topicname", $("#topicname").val());
       app.ui.populate();
     }, "json");
   });
@@ -245,8 +264,20 @@ $(function(){
       uid: Cookies.get("uid")
     }, app.ui.populate, "json");
   });
+  
+  if(Cookies.get("uid")){
+    $("#email").val(Cookies.get("email"));
+    $("#password").val(Cookies.get("password"));
+    $(".while-logged-out").hide();
+    $(".while-logged-in").show();
+    $("#flying-rules").html(".while-logged-out{display:none;}");
+  } else {
+    $(".while-logged-in").hide();
+    $(".while-logged-out").show();
+    $("#flying-rules").html(".while-logged-in{display:none;}");
+  }
 
-  if(Cookies.get("topicname")){
+  if(Cookies.get("currentContent")){
     app.ui.populate();
   } else {
     app.random.topic();

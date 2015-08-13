@@ -135,10 +135,3 @@ hr{
 .column-header{
   border:none;
 }
-
-.while-logged-in{
-
-}
-.while-logged-out{
-  display:none;
-}

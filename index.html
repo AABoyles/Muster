@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.core.min.css" type="text/css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css" type="text/css" />
     <link rel="stylesheet" href="//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css" type="text/css" />
     <link rel="stylesheet" href="main.css" type="text/css" />
+    <style id="flying-rules">.while-logged-out{ display:none; }</style>
   </head>
 
   <body>
@@ -29,6 +32,7 @@
           <button id="view-all-topics" class="btn btn-default" role="button">Topics</button>
           <button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>
           <button data-toggle='modal' data-target='#login-dialog' class='btn btn-default while-logged-out' role='button'>Login</button>
+          <button data-toggle='modal' id="logout-button" class='btn btn-default while-logged-in' role='button'>Logout</button>
         </div>
       </div>
     </nav>
@@ -47,6 +51,7 @@
             <h4 class="modal-title" id="loginLabel">Login</h4>
           </div>
           <div class="modal-body">
+            <p>If you don't have an account yet, just enter your e-mail and a password and we'll make one for you.</p>
             <form>
               <div class="form-group emailwrapper">
                 <label for="email">Email address</label>
@@ -59,8 +64,8 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">I don't want to!</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Nevermind</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="login-button">Login</button>
           </div>
         </div>
       </div>
@@ -171,6 +176,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.0.3/js.cookie.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"></script>
