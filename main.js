@@ -81,8 +81,8 @@ $(function(){
         submissionDiv.append("<div class='panel-body'><p class='text-center'>Be the first to <a href='#' data-toggle='modal' data-target='#submissions'>submit a position.</a></p></div>");
       } else {
         submissionDiv.append("<div class='panel-body'>"+markdown.toHTML(app.ui.currentBodyContent.content)+"</div>");
-          if(!Cookies.get("votedFor"+app.ui.currentBodyContent.sid)){
-            submissionDiv.append('<hr /><div class="panel-body estimation">'+
+        if(!Cookies.get("voteFor"+app.ui.currentBodyContent.sid)){
+          submissionDiv.append('<hr /><div class="panel-body estimation">'+
             ' <p>How confident are you (in percentages) that the author <b>actually</b> holds this opinion?</p>'+
             ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">1</button> ' +
             ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">10</button> '+
@@ -97,18 +97,44 @@ $(function(){
             ' <button data-sid="'+app.ui.currentBodyContent.sid+'" class="estimate btn btn-default">99</button>' +
             '</div>').find(".estimate").click(function(){
               var $this = $(this);
-              $.post("api/estimate.php", {sid: $this.data("sid"), estimate: parseInt($this.text())}, function(data){
+              var estimate = parseInt($this.text());
+              Cookies.set("voteFor"+$this.data("sid"), estimate);
+              $.post("api/estimate.php", {sid: $this.data("sid"), estimate: estimate}, function(ret){
                 $this.parent().slideUp(400, function(){
-                  $(this).html("<p class='text-center'>Distribution of estimates:</p><svg id='graph"+$this.data("sid")+"'></svg>").slideDown();
-                  app.ui.graph($this.data('sid'), data);
+                  var exclaim = "Good Job!";
+                  var cclass = "alert-success";
+                  if((estimate > 50 & ret.isReal != "1") | (estimate < 50 & ret.isReal == "1")){
+                      exclaim = "Oh, bummer.";
+                      cclass = "alert-danger";
+                  }
+                  var belief = "<div class='alert " + cclass + "' role='alert'><p class='text-center'><strong>"+exclaim+"</strong> This author does not believe this.</p></div>";
+                  if(ret.isReal=="1"){
+                    var belief = "<div class='alert " + cclass + "' role='alert'><p class='text-center'><strong>"+exclaim+"</strong> This author holds this belief honestly.</p></div>";
+                  }
+                  $(this)
+                    .html("<p class='text-center'>Distribution of estimates:</p><svg id='graph'></svg>" + belief)
+                    .slideDown();
+                  app.ui.graph(ret);
                 });
-                Cookies.set("voteFor"+$this.data("sid"), parseInt($this.text()));
               }, "json");
             });
           } else {
-            $.getJSON("api/estimate.php", {sid: app.ui.currentBodyContent.sid}, function(ret){
-              submissionDiv.append("<hr /><div class='panel-body'><p class='text-center'>Distribution of estimates:</p></div><svg id='graph"+app.ui.currentBodyContent.sid+"'></svg>");
-              app.ui.graph(app.ui.currentBodyContent.submission.sid, ret);
+            submissionDiv
+              .append('<hr /><div class="panel-body estimation"><p class="text-center">You\'ve already judged this Submission.</p><button class="btn btn-default">Show Results</button></div>')
+              .find("button").click(function(){
+                $this = $(this);
+                $.getJSON("api/estimate.php", {sid: app.ui.currentBodyContent.sid}, function(ret){
+                  $this.parent().slideUp(400, function(){
+                    var belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author does not believe this.</p></div>";
+                    if(ret.isReal=="1"){
+                      belief = "<div class='alert alert-info' role='alert'><p class='text-center'>This author holds this belief honestly.</p></div>";
+                    }
+                    $(this)
+                      .html("<p class='text-center'>Distribution of estimates:</p><svg id='graph'></svg>"+belief)
+                      .slideDown();
+                    app.ui.graph(ret);
+                  });
+                });
             });
           }
       }
@@ -120,15 +146,15 @@ $(function(){
     });
   };
 
-  app.ui.graph = function(sid, ret){
+  app.ui.graph = function(ret){
     var margin = {top: 10, right: 20, bottom: 20, left: 30},
-      width = $("svg#graph"+sid).parent().width() - margin.left - margin.right,
+      width = $("svg#graph").parent().width() - margin.left - margin.right,
       height = 100 - margin.top - margin.bottom,
       x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
       y = d3.scale.linear().range([height, 0]),
       xAxis = d3.svg.axis().scale(x).orient("bottom"),
       yAxis = d3.svg.axis().scale(y).orient("left").ticks(6, "d"),
-      svg = d3.select("svg#graph"+sid)
+      svg = d3.select("svg#graph")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -160,7 +186,7 @@ $(function(){
   
   $("#view-all-topics").click(function(){
     var main = $("#main").slideUp(400, function(){
-      $(this).html("<h2>Topics</h2><table id='topic-table' class='table responsive table-striped table-bordered table-hover'><thead><tr><th><input type='text' class='column-header' data-colno='0' placeholder='Name' /></th><th><input type='integer' class='column-header' data-colno='2' placeholder='Submissions' /></th></thead></table>");
+      $(this).html("<h2>Topics</h2><div class='panel panel-default'><table id='topic-table' class='table responsive table-striped table-hover'><thead><tr><th><input type='text' class='column-header' data-colno='0' placeholder='Name' /></th><th><input type='integer' class='column-header' data-colno='2' placeholder='Submissions' /></th></thead></table></div>");
       var table = $(this).find("#topic-table").DataTable({
         ajax: "api/all/topics.php",
         dom: "t",
@@ -179,7 +205,7 @@ $(function(){
         $(this).find("tr td:first-child").click(function(){app.topic($(this).text().trim());});
       });
       $(this)
-        .append('<button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>')
+        .append('<div style="text-align:center;"><button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button></div>')
         .slideDown();
     })
     

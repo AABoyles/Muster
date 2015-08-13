@@ -2,7 +2,7 @@
 
 require_once("creds.php");
 
-$sid = mysqli_real_escape_string($db, $_POST['sid']);
+$sid = mysqli_real_escape_string($db, $_REQUEST['sid']);
 
 if($_SERVER['REQUEST_METHOD']=="POST"){
     $result = mysqli_query($db, "INSERT INTO  estimates (`submissionid`, `estimate`) VALUES ($sid,". mysqli_real_escape_string($db, $_POST['estimate']).")");
