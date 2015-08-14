@@ -251,9 +251,7 @@ $(function(){
       description: $("#topicdescription").val(),
       uid: Cookies.get("uid")
     }, function(data){
-      Cookies.set("topicid", parseInt(data.tid));
-      Cookies.set("topicname", $("#topicname").val());
-      app.ui.populate();
+      app.ui.populate(data);
     }, "json");
   });
 
@@ -262,10 +260,10 @@ $(function(){
       $("#submission-word-count").addClass("invalid");
     }
     $.post("api/submission.php", {
-      topicid: Cookies.get("topicid"),
-      essay: $("#essay").val(),
+      topicid: JSON.parse(Cookies.get("currentContent")).tid,
+      content: $("#essay").val(),
       realop: $("#realop").is(":checked"),
-      uid: Cookies.get("uid")
+      userid: Cookies.get("uid")
     }, app.ui.populate, "json");
   });
   
