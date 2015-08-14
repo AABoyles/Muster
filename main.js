@@ -186,19 +186,6 @@ $(function(){
   //One liners you might be able to bake into the Markup without much fuss...
   $("#login-button").click(app.user.login);
   $("#logout-button").click(app.user.logout);
-
-  $('#topicSearch').typeahead(null, {
-    name: 'topics',
-    source: new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      prefetch: 'api/autocomplete/',
-      remote: {
-        url: 'api/autocomplete/?topicname=%Q',
-        wildcard: '%Q'
-      }
-    })
-  }).bind('typeahead:select', function(ev, suggestion){app.topic(suggestion);});
   
   $("#view-all-topics").click(function(){
     $("#main").slideUp(400, function(){
