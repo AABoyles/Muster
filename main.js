@@ -73,7 +73,6 @@ $(function(){
       currentContent = JSON.parse(Cookies.get("currentContent"));
     }
     Cookies.set("currentContent", currentContent);
-    console.log(currentContent);
     var main = $("#main").slideUp(400, function(){
       main.html("<h2 class='text-center'>"+currentContent.name+"</h2><p class='text-center'>"+currentContent.description+"</p>");
       var submissionDiv = $("<div class='panel panel-default submission'></div>");
@@ -187,7 +186,6 @@ $(function(){
   //One liners you might be able to bake into the Markup without much fuss...
   $("#login-button").click(app.user.login);
   $("#logout-button").click(app.user.logout);
-  $("#randomTopic").click(app.random.topic);
 
   $('#topicSearch').typeahead(null, {
     name: 'topics',
@@ -203,7 +201,7 @@ $(function(){
   }).bind('typeahead:select', function(ev, suggestion){app.topic(suggestion);});
   
   $("#view-all-topics").click(function(){
-    var main = $("#main").slideUp(400, function(){
+    $("#main").slideUp(400, function(){
       $(this).html("<h2>Topics</h2><div class='panel panel-default'><table id='topic-table' class='table responsive table-striped table-hover'><thead><tr><th><input type='text' class='column-header' data-colno='0' placeholder='Name' /></th><th><input type='integer' class='column-header' data-colno='2' placeholder='Submissions' /></th></thead></table></div>");
       var table = $(this).find("#topic-table").DataTable({
         ajax: "api/all/topics.php",
@@ -225,10 +223,16 @@ $(function(){
         $(this).find("tr td:first-child").click(function(){app.topic($(this).text().trim());});
       });
 
+      var div = $('<div style="text-align:center;">');
+      $('<button id="randomTopic" class="btn btn-default" role="button">Get a Random Topic</button>')
+        .click(app.random.topic)
+        .appendTo(div);
+      $('<button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button>')
+        .appendTo(div);
       $(this)
-        .append('<div style="text-align:center;"><button id="addATopic" data-toggle="modal" data-target="#topics" class="btn btn-default while-logged-in" role="button">Create a New Topic</button></div>')
+        .append(div)
         .slideDown();
-    })
+    });
   });
 
   $("#essay").keyup(function(){
