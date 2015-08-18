@@ -2,17 +2,13 @@
 
 require_once("../creds.php");
 
-$response = array();
-
-$query = "SELECT tid, name, description, sid, content FROM topics LEFT JOIN (submissions) ON (tid=topicid)";
-
-if(!is_null($_GET['topicname'])) {
-    $topicname = mysqli_real_escape_string($db, $_GET['topicname']);
-    $query = "$query WHERE name = '$topicname'";
+$query = "SELECT CONCAT(LEFT(content, 40),'...') AS content, count(eid) AS nestimates FROM submissions, estimates WHERE submissionid = sid";
+if(isset($_SESSION['uid'])) {
+    $uid = $_SESSION['uid'];
+    $query = "$query AND submissions.userid = '$uid'";
 }
-
-$query = "$query ORDER BY RAND() LIMIT 1";
+$query = "$query GROUP BY submissionid";
 $results = mysqli_query($db, $query);
-$response = mysqli_fetch_array($results, MYSQLI_ASSOC);
+$response = mysqli_fetch_all($results, MYSQLI_NUM);
 
-exit(json_encode($response));
+exit(json_encode(array("data"=>$response)));

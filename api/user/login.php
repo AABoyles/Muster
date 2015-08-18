@@ -6,11 +6,11 @@ $response = array("success"=>FALSE);
 
 $email = mysqli_real_escape_string($db, $_POST['email']);
 $password = hash("sha512", mysqli_real_escape_string($db, $_POST['password']));
+$result = mysqli_query($db, "SELECT uid FROM  `users` WHERE `email` = '$email'");
 
-$query = "SELECT uid FROM  `users` WHERE `email` = '$email'";
-$result = mysqli_query($db, $query);
 if(is_null(mysqli_fetch_array($result, MYSQLI_ASSOC))){
-  $query = "INSERT INTO  `users` (`email`, `password`) VALUES ('$email', '$password')";
+  $salt = mcrypt_create_iv(64);
+  $query = "INSERT INTO  `users` (`email`, `password`, `salt`) VALUES ('$email', '$password', '$salt')";
   $result = mysqli_query($db, $query);
 }
 
@@ -18,10 +18,12 @@ $query = "SELECT uid FROM  `users` WHERE `email` = '$email' AND password = '$pas
 $result = mysqli_query($db, $query);
 $uid = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-if(mysqli_num_rows($result)>0){
-    $response['success'] = TRUE;
-    $response['uid'] = $uid['uid'];
-    session_start();
+if(mysqli_num_rows($result)==1){
+  $response['success'] = TRUE;
+  $response['uid'] = $uid['uid'];
+  $_SESSION['uid'] = $uid['uid'];
+} else {
+  $response['message'] = 'Incorrect Password!';
 }
 
 exit(json_encode($response));
